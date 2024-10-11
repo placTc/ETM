@@ -6,6 +6,7 @@ import (
 	. "etm/common"
 	"etm/common/utils"
 	cfg "etm/configuration"
+	"fmt"
 	"slices"
 	"time"
 )
@@ -29,7 +30,15 @@ func New(machine cfg.MachineConfiguration, initialTape []string, initialTapeInde
 	executor.currentState = singleState{Name: machine.InitialState, State: machine.StateMap[machine.InitialState]}
 	executor.tape = initialTape
 	for i := range executor.tape {
-		executor.tape[i] = executor.machine.BlankSymbol
+		if !slices.Contains(executor.machine.Symbols, executor.tape[i]) {
+			panic(
+				fmt.Sprintf(
+					"Initial tape contained symbol '%v' not present in alphabet '%v'",
+					executor.tape[i],
+					executor.machine.Symbols,
+				),
+			)
+		}
 	}
 	executor.index = initialTapeIndex
 

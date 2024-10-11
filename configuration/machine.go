@@ -32,7 +32,6 @@ type StateAction struct {
 
 func New(definition MachineDefinition, settings Settings) (MachineConfiguration, error) {
 	machineConfiguration := MachineConfiguration{}
-
 	machineConfiguration.ExecutionDelay = settings.Executor.ExecutionDelayMs
 	if machineConfiguration.ExecutionDelay < 0 {
 		return MachineConfiguration{}, fmt.Errorf(
@@ -143,6 +142,23 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 				)
 			}
 
+			if !slices.Contains(
+				append(
+					ConvertSingleOrArrayEitherToArray(machineConfiguration.PermittedInput),
+					machineConfiguration.BlankSymbol,
+				),
+				stateActionDefinition.Write,
+			) {
+				return MachineConfiguration{}, fmt.Errorf(
+					"Could not create Turing Machine configuration, "+
+						"the write symbol '%v' for action symbol '%v' in state '%v' was not in the permitted inputs '%v'",
+					stateActionDefinition.Move,
+					stateActionSymbol,
+					stateName,
+					ConvertSingleOrArrayEitherToArray(machineConfiguration.PermittedInput),
+				)
+			}
+
 			if !slices.Contains([]string{string(MoveRight), string(MoveLeft), string(NullMove)}, stateActionDefinition.Move) {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
@@ -170,7 +186,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 					stateActionSymbol,
 				)
 			}
-			
+
 			state[stateActionSymbol] = StateAction{
 				Move:       Move(stateActionDefinition.Move),
 				Transition: stateActionDefinition.Transition,
@@ -181,8 +197,8 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			_, exists := state[machineConfiguration.Symbols[i]]
 			if !exists {
 				state[machineConfiguration.Symbols[i]] = StateAction{
-					Move:       state[machineConfiguration.Symbols[i]].Move,
-					Transition: state[machineConfiguration.Symbols[i]].Transition,
+					Move:       state[DefaultReference].Move,
+					Transition: state[DefaultReference].Transition,
 					Write:      machineConfiguration.Symbols[i],
 				}
 			}
