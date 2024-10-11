@@ -1,0 +1,35 @@
+alphabet:
+  blank: &blank E 
+  symbols: [0, 1, E]
+  input: [0, 1]
+
+state:
+  initial: q1
+  halting: halt
+  null_move: true
+  states:
+    q1:
+      blank:
+        write: 0
+        move: R
+        transition: q2
+      default: null
+    q2:
+      blank:
+        write: &blank
+        move: R
+        transition: q3
+      default: null
+    q3:
+      blank:
+        write: 1
+        move: R
+        transition: q4
+      default: null
+    q4:
+      blank:
+        write: &blank
+        move: R
+        transition: q1
+      default: null
+    halt: null

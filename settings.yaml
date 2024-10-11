@@ -1,5 +1,5 @@
 general:
-  turingMachineConfiguration: tmConfigs/test.tmf
+  turingMachineConfiguration: tmConfigs/turings-first-example.tmf
 
 executor:
   executionDelayMs: 1000
