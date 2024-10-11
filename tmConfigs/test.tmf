@@ -1,0 +1,23 @@
+alphabet:
+  symbols: [0, 1]
+  blank: 0
+  input: [0, 1]
+
+state:
+  initial: q0
+  halting: halt
+  null_move: true   # If not defined, will default to false
+  states:
+    q0:
+      0:
+        transition: q1
+      1:
+        write: 0
+        transition: q1
+    q1:
+      0:
+        write: 1
+        transition: q0
+      1:
+        transition: halt
+    halt: null
