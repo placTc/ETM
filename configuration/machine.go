@@ -9,13 +9,13 @@ import (
 )
 
 type MachineConfiguration struct {
-	ExecutionDelay       int
-	Symbols              []string
-	BlankSymbol          string
-	PermittedInput       Either[string, []string]
-	InitialState         string
-	PermittedFinalStates Either[string, []string]
-	StateMap             map[string]State
+	ExecutionDelay int
+	Symbols        []string
+	BlankSymbol    string
+	PermittedInput Either[string, []string]
+	InitialState   string
+	HaltingStates  Either[string, []string]
+	StateMap       map[string]State
 }
 
 type State map[string]StateAction
@@ -170,13 +170,13 @@ func CreateMachineConfiguration(definition MachineDefinition, settings Settings)
 	}
 	machineConfiguration.InitialState = definition.StateDefinition.Initial
 
-	if definition.StateDefinition.Final.IsNil() {
+	if definition.StateDefinition.Halting.IsNil() {
 		return MachineConfiguration{}, fmt.Errorf(
 			"Could not create Turing Machine configuration, the final state was not defined",
 		)
 	}
 
-	finalStates := ConvertSingleOrArrayEitherToArray(definition.StateDefinition.Final)
+	finalStates := ConvertSingleOrArrayEitherToArray(definition.StateDefinition.Halting)
 	for i := 0; i < len(finalStates); i++ {
 		_, exists = definition.StateDefinition.States[finalStates[i]]
 		if !exists {
@@ -187,7 +187,7 @@ func CreateMachineConfiguration(definition MachineDefinition, settings Settings)
 			)
 		}
 	}
-	machineConfiguration.PermittedFinalStates = definition.StateDefinition.Final
+	machineConfiguration.HaltingStates = definition.StateDefinition.Halting
 
 	return machineConfiguration, nil
 }

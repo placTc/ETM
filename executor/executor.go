@@ -22,7 +22,7 @@ type singleState struct {
 	State State
 }
 
-func InitializeExecutor(machine MachineConfiguration, initialTape []string, initialTapeIndex int64) Executor {
+func New(machine MachineConfiguration, initialTape []string, initialTapeIndex int64) Executor {
 	executor := Executor{}
 	executor.machine = machine
 	executor.currentState = singleState{Name: machine.InitialState, State: machine.StateMap[machine.InitialState]}
@@ -46,10 +46,7 @@ func (ex *Executor) Step() error {
 			Name:  currentStateAction.Transition,
 			State: ex.machine.StateMap[currentStateAction.Transition],
 		}
-		if slices.Contains(
-			utils.ConvertSingleOrArrayEitherToArray(ex.machine.PermittedFinalStates),
-			ex.currentState.Name,
-		) {
+		if currentStateIsHaltState(ex) {
 			ex.halted = true
 			return nil
 		}
@@ -61,6 +58,13 @@ func (ex *Executor) Step() error {
 		return errors.New("Turing machine has halted.")
 	}
 
+}
+
+func currentStateIsHaltState(ex *Executor) bool {
+	return slices.Contains(
+		utils.ConvertSingleOrArrayEitherToArray(ex.machine.HaltingStates),
+		ex.currentState.Name,
+	)
 }
 
 func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
@@ -78,23 +82,22 @@ func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
 
 func move(ex *Executor, move Move) {
 	if move == MoveLeft {
-		moveRight(ex)
-	} else if move == MoveRight {
 		moveLeft(ex)
+	} else if move == MoveRight {
+		moveRight(ex)
 	}
 }
 
 func moveRight(ex *Executor) {
 	if ex.index == int64(len(ex.tape)-1) {
 		ex.tape = append(ex.tape, ex.machine.BlankSymbol)
-	} else {
-		ex.index += 1
 	}
+	ex.index += 1
 }
 
 func moveLeft(ex *Executor) {
 	if ex.index == 0 {
-		ex.tape = append(ex.tape, ex.machine.BlankSymbol)
+		ex.tape = append(ex.tape, "")
 		copy(ex.tape[1:], ex.tape)
 		ex.tape[0] = ex.machine.BlankSymbol
 	} else {

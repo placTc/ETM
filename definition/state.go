@@ -4,7 +4,7 @@ import "etm/common/utils"
 
 type StateDefinition struct {
 	Initial  string                           `yaml:"initial"`
-	Final    utils.Either[string, []string]   `yaml:"final"`
+	Halting  utils.Either[string, []string]   `yaml:"halting"`
 	NullMove bool                             `yaml:"null_move"`
 	States   map[string]SingleStateDefinition `yaml:"states"`
 }

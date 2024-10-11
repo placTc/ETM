@@ -5,7 +5,7 @@ alphabet:
 
 state:
   initial: A
-  final: HALT
+  halting: HALT
   null_move1: false
   states:
     A:
