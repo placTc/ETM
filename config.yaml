@@ -1,0 +1,8 @@
+general:
+  turingMachineConfiguration: bb.tmf
+
+executor:
+  executionDelayMs: 1000
+  initialTape: [0, 0, 0, 0, 0, 0]
+  initialIndex: 3
+

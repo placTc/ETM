@@ -1,0 +1,34 @@
+alphabet:
+  symbols: [0, 1]
+  blank: 0
+  input: 1
+
+state:
+  initial: A
+  final: HALT
+  null_move1: false
+  states:
+    A:
+      0:
+        write: 1
+        move: R
+        transition: B
+      1:
+        move: L
+        transition: C
+    B:
+      0:
+        write: 1
+        move: L
+        transition: A
+      1:
+        move: R
+    C:
+      0:
+        write: 1
+        move: L
+        transition: B
+      1:
+        move: R
+        transition: HALT
+    HALT: null
