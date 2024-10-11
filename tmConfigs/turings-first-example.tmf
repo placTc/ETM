@@ -1,6 +1,9 @@
 alphabet:
-  blank: &blank E 
-  symbols: [0, 1, E]
+  blank: "-" 
+  symbols: 
+    - 0
+    - 1
+    - "-"
   input: [0, 1]
 
 state:
@@ -16,7 +19,7 @@ state:
       default: null
     q2:
       blank:
-        write: &blank
+        write: blank
         move: R
         transition: q3
       default: null
@@ -28,7 +31,7 @@ state:
       default: null
     q4:
       blank:
-        write: &blank
+        write: blank
         move: R
         transition: q1
       default: null

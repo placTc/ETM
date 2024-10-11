@@ -106,12 +106,17 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			if stateActionSymbol == BlankSymbolReference {
 				stateActionSymbol = definition.Alphabet.Blank
 			}
+
 			if stateActionDefinition.Transition == "" {
 				stateActionDefinition.Transition = stateName
 			}
+
 			if stateActionDefinition.Write == "" {
 				stateActionDefinition.Write = stateActionSymbol
+			} else if stateActionDefinition.Write == BlankSymbolReference {
+				stateActionDefinition.Write = machineConfiguration.BlankSymbol
 			}
+
 			if definition.StateDefinition.NullMove && stateActionDefinition.Move == "" {
 				stateActionDefinition.Move = string(NullMove)
 			}
@@ -165,6 +170,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 					stateActionSymbol,
 				)
 			}
+			
 			state[stateActionSymbol] = StateAction{
 				Move:       Move(stateActionDefinition.Move),
 				Transition: stateActionDefinition.Transition,
@@ -175,9 +181,9 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			_, exists := state[machineConfiguration.Symbols[i]]
 			if !exists {
 				state[machineConfiguration.Symbols[i]] = StateAction{
-					Move: state[machineConfiguration.Symbols[i]].Move,
+					Move:       state[machineConfiguration.Symbols[i]].Move,
 					Transition: state[machineConfiguration.Symbols[i]].Transition,
-					Write: machineConfiguration.Symbols[i],
+					Write:      machineConfiguration.Symbols[i],
 				}
 			}
 		}
