@@ -16,7 +16,7 @@ func bootstrap() executor.Executor {
 	machineDefinition, err := def.LoadMachineDefinition(config.General.TuringMachineConfigurationFile)
 	utl.PanicOnError(err)
 
-	machine, err := cfg.CreateMachineConfiguration(machineDefinition, config)
+	machine, err := cfg.New(machineDefinition, config)
 	utl.PanicOnError(err)
 
 	return executor.New(machine, config.Executor.InitialTape, config.Executor.InitialIndex)

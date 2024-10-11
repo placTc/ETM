@@ -3,14 +3,15 @@ package executor
 import (
 	"encoding/json"
 	"errors"
+	. "etm/common"
 	"etm/common/utils"
-	. "etm/configuration"
+	cfg "etm/configuration"
 	"slices"
 	"time"
 )
 
 type Executor struct {
-	machine      MachineConfiguration
+	machine      cfg.MachineConfiguration
 	currentState singleState
 	tape         []string
 	index        int64
@@ -19,10 +20,10 @@ type Executor struct {
 
 type singleState struct {
 	Name  string
-	State State
+	State cfg.State
 }
 
-func New(machine MachineConfiguration, initialTape []string, initialTapeIndex int64) Executor {
+func New(machine cfg.MachineConfiguration, initialTape []string, initialTapeIndex int64) Executor {
 	executor := Executor{}
 	executor.machine = machine
 	executor.currentState = singleState{Name: machine.InitialState, State: machine.StateMap[machine.InitialState]}

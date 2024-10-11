@@ -1,6 +1,7 @@
 package structure
 
 import (
+	. "etm/common"
 	. "etm/common/settings"
 	. "etm/common/utils"
 	. "etm/definition"
@@ -26,7 +27,7 @@ type StateAction struct {
 	Transition string
 }
 
-func CreateMachineConfiguration(definition MachineDefinition, settings Settings) (MachineConfiguration, error) {
+func New(definition MachineDefinition, settings Settings) (MachineConfiguration, error) {
 	machineConfiguration := MachineConfiguration{}
 
 	machineConfiguration.ExecutionDelay = settings.Executor.ExecutionDelayMs

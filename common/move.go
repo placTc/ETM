@@ -1,4 +1,4 @@
-package structure
+package common
 
 type Move string
 
