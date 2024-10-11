@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"etm/common/utils"
-	. "etm/machineConfiguration"
+	. "etm/configuration"
 	"slices"
 	"time"
 )
@@ -78,19 +78,27 @@ func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
 
 func move(ex *Executor, move Move) {
 	if move == MoveLeft {
-		if ex.index == 0 {
-			ex.tape = append(ex.tape, "")
-			copy(ex.tape[1:], ex.tape)
-			ex.tape[0] = ex.machine.BlankSymbol
-		} else {
-			ex.index -= 1
-		}
+		moveRight(ex)
 	} else if move == MoveRight {
-		if ex.index == int64(len(ex.tape)-1) {
-			ex.tape = append(ex.tape, ex.machine.BlankSymbol)
-		} else {
-			ex.index += 1
-		}
+		moveLeft(ex)
+	}
+}
+
+func moveRight(ex *Executor) {
+	if ex.index == int64(len(ex.tape)-1) {
+		ex.tape = append(ex.tape, ex.machine.BlankSymbol)
+	} else {
+		ex.index += 1
+	}
+}
+
+func moveLeft(ex *Executor) {
+	if ex.index == 0 {
+		ex.tape = append(ex.tape, ex.machine.BlankSymbol)
+		copy(ex.tape[1:], ex.tape)
+		ex.tape[0] = ex.machine.BlankSymbol
+	} else {
+		ex.index -= 1
 	}
 }
 

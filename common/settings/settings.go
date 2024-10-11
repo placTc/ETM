@@ -7,9 +7,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const configFilename = "config.yaml"
+const configFilename = "settings.yaml"
 
-type Config struct {
+type Settings struct {
 	General  General  `yaml:"general"`
 	Executor Executor `yaml:"executor"`
 }
@@ -24,8 +24,8 @@ type Executor struct {
 	InitialIndex     int64    `yaml:"initialIndex"`
 }
 
-func LoadConfig() Config {
-	config := Config{}
+func LoadSettings() Settings {
+	config := Settings{}
 
 	fileData, err := os.ReadFile(configFilename)
 	u.PanicOnErrorWithCustomMessage(err, "Couldn't read config file!")

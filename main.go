@@ -1,25 +1,25 @@
 package main
 
 import (
-	cfg "etm/common/config"
-	"etm/common/utils"
+	settings "etm/common/settings"
+	utl "etm/common/utils"
+	cfg "etm/configuration"
 	def "etm/definition"
-	ex "etm/executor"
-	mc "etm/machineConfiguration"
+	exc "etm/executor"
 	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
 
-func bootstrap() ex.Executor {
-	config := cfg.LoadConfig()
+func bootstrap() exc.Executor {
+	config := settings.LoadSettings()
 	machineDefinition, err := def.LoadMachineDefinition(config.General.TuringMachineConfigurationFile)
-	utils.PanicOnError(err)
+	utl.PanicOnError(err)
 
-	machine, err := mc.CreateMachineConfiguration(machineDefinition, config)
-	utils.PanicOnError(err)
+	machine, err := cfg.CreateMachineConfiguration(machineDefinition, config)
+	utl.PanicOnError(err)
 
-	return ex.InitializeExecutor(machine, config.Executor.InitialTape, config.Executor.InitialIndex)
+	return exc.InitializeExecutor(machine, config.Executor.InitialTape, config.Executor.InitialIndex)
 }
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	executor.Run(nil, printExecutor)
 }
 
-func printExecutor(ex *ex.Executor) {
+func printExecutor(ex *exc.Executor) {
 	fmt.Println(
 		ex.ToDisplay().Tape,
 		ex.ToDisplay().CurrentState.Name,

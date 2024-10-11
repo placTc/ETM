@@ -1,7 +1,7 @@
 package structure
 
 import (
-	. "etm/common/config"
+	. "etm/common/settings"
 	. "etm/common/utils"
 	. "etm/definition"
 	"fmt"
@@ -26,15 +26,15 @@ type StateAction struct {
 	Transition string
 }
 
-func CreateMachineConfiguration(definition MachineDefinition, config Config) (MachineConfiguration, error) {
+func CreateMachineConfiguration(definition MachineDefinition, settings Settings) (MachineConfiguration, error) {
 	machineConfiguration := MachineConfiguration{}
 
-	machineConfiguration.ExecutionDelay = config.Executor.ExecutionDelayMs
+	machineConfiguration.ExecutionDelay = settings.Executor.ExecutionDelayMs
 	if machineConfiguration.ExecutionDelay < 0 {
 		return MachineConfiguration{}, fmt.Errorf(
 			"Could not create Turing Machine configuration, "+
 				"the execution delay was negative: %v",
-			config.Executor.ExecutionDelayMs,
+			settings.Executor.ExecutionDelayMs,
 		)
 	}
 
