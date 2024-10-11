@@ -1,8 +1,8 @@
 general:
-  turingMachineConfiguration: tmConfigs/turings-first-example.tmf
+  turingMachineConfiguration: tmConfigs/copy-subroutine.tmf
 
 executor:
-  executionDelayMs: 1000
-  initialTape: [0, 0, 0, 0, 0, 0]
-  initialIndex: 3
+  executionDelayMs: 100
+  initialTape: [0, 0, 1, 1, 1, 0]
+  initialIndex: 2
 

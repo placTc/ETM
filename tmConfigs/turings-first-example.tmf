@@ -16,23 +16,27 @@ state:
         write: 0
         move: R
         transition: q2
-      default: null
+      default: 
+        transition: halt
     q2:
       blank:
         write: blank
         move: R
         transition: q3
-      default: null
+      default: 
+        transition: halt
     q3:
       blank:
         write: 1
         move: R
         transition: q4
-      default: null
+      default: 
+        transition: halt
     q4:
       blank:
         write: blank
         move: R
         transition: q1
-      default: null
+      default: 
+        transition: halt
     halt: null
