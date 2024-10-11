@@ -148,11 +148,11 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 					machineConfiguration.BlankSymbol,
 				),
 				stateActionDefinition.Write,
-			) {
+			) && stateActionSymbol != DefaultReference {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
 						"the write symbol '%v' for action symbol '%v' in state '%v' was not in the permitted inputs '%v'",
-					stateActionDefinition.Move,
+					stateActionDefinition.Write,
 					stateActionSymbol,
 					stateName,
 					ConvertSingleOrArrayEitherToArray(machineConfiguration.PermittedInput),
