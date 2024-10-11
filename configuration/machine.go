@@ -9,6 +9,9 @@ import (
 	"slices"
 )
 
+const BlankSymbolReference = "blank"
+const DefaultReference = "default"
+
 type MachineConfiguration struct {
 	ExecutionDelay int
 	Symbols        []string
@@ -46,6 +49,20 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 	}
 	machineConfiguration.Symbols = definition.Alphabet.Symbols
 
+	if slices.Contains(machineConfiguration.Symbols, DefaultReference) {
+		return MachineConfiguration{}, fmt.Errorf(
+			"Could not create Turing Machine configuration, '%v' is a protected keyword and cannot be set as a symbol",
+			DefaultReference,
+		)
+	}
+
+	if slices.Contains(machineConfiguration.Symbols, BlankSymbolReference) {
+		return MachineConfiguration{}, fmt.Errorf(
+			"Could not create Turing Machine configuration, '%v' is a protected keyword and cannot be set as a symbol",
+			BlankSymbolReference,
+		)
+	}
+
 	if definition.Alphabet.Blank == "" {
 		return MachineConfiguration{}, fmt.Errorf(
 			"Could not create Turing Machine configuration, blank symbol was not specified",
@@ -56,7 +73,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 	if !slices.Contains(machineConfiguration.Symbols, machineConfiguration.BlankSymbol) {
 		return MachineConfiguration{}, fmt.Errorf(
 			"Could not create Turing Machine configuration, "+
-				"the blank symbol %v was not found in the alphabet %v",
+				"the blank symbol '%v' was not found in the alphabet '%v'",
 			definition.Alphabet.Blank,
 			definition.Alphabet.Symbols,
 		)
@@ -73,7 +90,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 		if !slices.Contains(machineConfiguration.Symbols, inputs[i]) {
 			return MachineConfiguration{}, fmt.Errorf(
 				"Could not create Turing Machine configuration, "+
-					"the input symbol %v was not found in the alphabet %v",
+					"the input symbol '%v' was not found in the alphabet '%v'",
 				inputs[i],
 				inputs,
 				definition.Alphabet.Symbols,
@@ -86,6 +103,9 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 	for stateName, stateDefinition := range definition.StateDefinition.States {
 		var state State = State{}
 		for stateActionSymbol, stateActionDefinition := range stateDefinition {
+			if stateActionSymbol == BlankSymbolReference {
+				stateActionSymbol = definition.Alphabet.Blank
+			}
 			if stateActionDefinition.Transition == "" {
 				stateActionDefinition.Transition = stateName
 			}
@@ -96,10 +116,10 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 				stateActionDefinition.Move = string(NullMove)
 			}
 
-			if !slices.Contains(machineConfiguration.Symbols, stateActionSymbol) {
+			if !slices.Contains(machineConfiguration.Symbols, stateActionSymbol) && stateActionSymbol != DefaultReference {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
-						"the action symbol %v for state %v was not found in the alphabet %v",
+						"the action symbol '%v' for state '%v' was not found in the alphabet '%v'",
 					stateActionSymbol,
 					stateName,
 					machineConfiguration.Symbols,
@@ -107,10 +127,10 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			}
 			_, exists := definition.StateDefinition.States[stateActionDefinition.Transition]
 
-			if !slices.Contains(machineConfiguration.Symbols, stateActionDefinition.Write) {
+			if !slices.Contains(machineConfiguration.Symbols, stateActionDefinition.Write) && stateActionSymbol != DefaultReference {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
-						"the write symbol %v for action symbol %v in state %v was not found in the alphabet %v",
+						"the write symbol '%v' for action symbol '%v' in state '%v' was not found in the alphabet '%v'",
 					stateActionDefinition.Write,
 					stateActionSymbol,
 					stateName,
@@ -121,7 +141,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			if !slices.Contains([]string{string(MoveRight), string(MoveLeft), string(NullMove)}, stateActionDefinition.Move) {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
-						"the specified move %v for action symbol %v in state %v was not L, R or N",
+						"the specified move '%v' for action symbol '%v' in state '%v' was not L, R or N",
 					stateActionDefinition.Move,
 					stateActionSymbol,
 					stateName,
@@ -131,7 +151,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			if !exists {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
-						"the specified transition state %v for state %v was not found in the list of state definitions",
+						"the specified transition state '%v' for state '%v' was not found in the list of state definitions",
 					stateActionDefinition.Transition,
 					stateName,
 				)
@@ -140,7 +160,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			if !definition.StateDefinition.NullMove && stateActionDefinition.Move == "" {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
-						"null move specified in state %v for symbol %v, while null moves are disallowed",
+						"null move specified in state '%v' for symbol '%v', while null moves are disallowed",
 					stateName,
 					stateActionSymbol,
 				)
@@ -151,6 +171,17 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 				Write:      stateActionDefinition.Write,
 			}
 		}
+		for i := range machineConfiguration.Symbols {
+			_, exists := state[machineConfiguration.Symbols[i]]
+			if !exists {
+				state[machineConfiguration.Symbols[i]] = StateAction{
+					Move: state[machineConfiguration.Symbols[i]].Move,
+					Transition: state[machineConfiguration.Symbols[i]].Transition,
+					Write: machineConfiguration.Symbols[i],
+				}
+			}
+		}
+		delete(state, DefaultReference)
 		stateMap[stateName] = state
 	}
 	machineConfiguration.StateMap = stateMap
@@ -183,7 +214,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 		if !exists {
 			return MachineConfiguration{}, fmt.Errorf(
 				"Could not create Turing Machine configuration, "+
-					"the specified final state %v was not found in the list of state definitions",
+					"the specified final state '%v' was not found in the list of state definitions",
 				finalStates[i],
 			)
 		}
