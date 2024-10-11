@@ -10,12 +10,12 @@ type Either[A, B any] struct {
 	value any
 }
 
-func (e *Either[A, B]) IsA() bool {
+func (e Either[A, B]) IsA() bool {
 	_, ok := e.value.(A)
 	return ok
 }
 
-func (e *Either[A, B]) IsB() bool {
+func (e Either[A, B]) IsB() bool {
 	_, ok := e.value.(B)
 	return ok
 }
@@ -26,6 +26,14 @@ func (e Either[A, B]) GetA() A {
 
 func (e Either[A, B]) GetB() B {
 	return e.value.(B)
+}
+
+func (e *Either[A, B]) SetA(a A) {
+	e.value = a
+}
+
+func (e *Either[A, B]) SetB(b B) {
+	e.value = b
 }
 
 func (e Either[A, B]) IsNil() bool {
