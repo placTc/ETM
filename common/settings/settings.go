@@ -16,6 +16,7 @@ type Settings struct {
 
 type General struct {
 	TuringMachineConfigurationFile string `yaml:"turingMachineConfiguration"`
+	LogFile                        string `yaml:"logFile"`
 }
 
 type Executor struct {

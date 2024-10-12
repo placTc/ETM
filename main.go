@@ -7,6 +7,7 @@ import (
 	def "etm/definition"
 	"etm/executor"
 	"fmt"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -25,16 +26,34 @@ func bootstrap() executor.Executor {
 func main() {
 	executor := bootstrap()
 
-	printExecutor(&executor)
-	executor.Run(nil, printExecutor)
+	config := settings.LoadSettings()
+	var file *os.File
+	if config.General.LogFile != "" {
+		file, _ = os.Create(config.General.LogFile)
+		defer file.Close()
+	} else {
+		file = nil
+	}
+
+	pe := printExecutor(file)
+	pe(&executor)
+	err := executor.Run(nil, pe)
+	fmt.Print("\n", err)
 }
 
-func printExecutor(ex *executor.Executor) {
-	fmt.Println(
-		ex.ToDisplay().Tape,
-		ex.ToDisplay().CurrentState.Name,
-		ex.ToDisplay().Index,
-	)
+func printExecutor(file *os.File) func(*executor.Executor) {
+	return func(exc *executor.Executor) {
+		dispEx := exc.ToDisplay()
+		fmt.Print(
+			"\033[2K\r",
+			dispEx.Tape, " ",
+			dispEx.CurrentState.Name, " ",
+			dispEx.Index,
+		)
+		if file != nil {
+			file.Write([]byte(fmt.Sprintf("%v %v %v\n", dispEx.Tape, dispEx.CurrentState.Name, dispEx.Index)))
+		}
+	}
 }
 
 func printYaml(inter interface{}) {

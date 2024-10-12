@@ -78,21 +78,22 @@ func currentStateIsHaltState(ex *Executor) bool {
 	)
 }
 
-func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
+func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) error {
 	for !ex.halted {
 		if prestep != nil {
 			prestep(ex)
 		}
 		err := ex.Step()
 		if err != nil {
-			fmt.Println(err)
-			return
+			return err
 		}
 		if poststep != nil {
 			poststep(ex)
 		}
 		time.Sleep(time.Duration(ex.machine.ExecutionDelay) * time.Millisecond)
 	}
+	
+	return nil
 }
 
 func move(ex *Executor, move Move) {

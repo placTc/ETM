@@ -5,20 +5,14 @@ alphabet:
   input: [0, 1]
 
 tape:
-  initial_tape: [blank, 1, 1, 0, 0, 1, 1, "#", blank, 0, 0, 1, 1, 1, 1, "#"]
+  initial_tape: [blank, 1, 1, 0, 0, 1, 1, "#", blank, 1, 1, 1, 0, 0, 1, 1, 1, 1, "#"]
   initial_index: 0
 
 state:
-  initial: q_init
+  initial: q_traverse_r1
   halting: halt
   null_move: true
   states:
-    q_init:
-      default:
-        move: R
-      "#":
-        transition: q_dec
-        move: L
     q_dec:
       0:
         write: 1
@@ -26,21 +20,21 @@ state:
       1:
         write: 0
         move: L
-        transition: q_traverse_r1
+        transition: q_traverse_l1
       default:
-        transition: halt
+        transition: q_clear
     q_inc:
       0:
         write: 1
         move: L
-        transition: q_traverse_l1
+        transition: q_traverse_r1
       1:
         write: 0
         move: L
       blank:
         write: 1
         move: L
-        transition: q_traverse_l1
+        transition: q_traverse_r1
       default:
         transition: halt
     q_traverse_r1:
@@ -53,13 +47,20 @@ state:
       default:
         move: R
       "#":
-        transition: q_inc
+        transition: q_dec
         move: L
     q_traverse_l1:
       default:
         move: L
       "#":
-        transition: q_dec
+        transition: q_inc
         move: L
-
+    q_clear:
+      default:
+        move: R
+        write: 0
+      blank:
+        move: R
+      "#":
+        transition: halt
     halt: null

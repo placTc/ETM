@@ -1,5 +1,6 @@
 general:
-  turingMachineConfiguration: tmConfigs/binary-add.tmf
+  turingMachineConfiguration: tmConfigs/count.tmf
+  logFile: tm.log
 
 executor:
-  executionDelayMs: 5
+  executionDelayMs: 1

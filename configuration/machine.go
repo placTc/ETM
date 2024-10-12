@@ -224,7 +224,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 				state[machineConfiguration.Symbols[i]] = StateAction{
 					Move:       state[DefaultReference].Move,
 					Transition: state[DefaultReference].Transition,
-					Write:      machineConfiguration.Symbols[i],
+					Write:      state[DefaultReference].Write,
 				}
 			}
 		}
