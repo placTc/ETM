@@ -19,7 +19,7 @@ func bootstrap() executor.Executor {
 	machine, err := cfg.New(machineDefinition, config)
 	utl.PanicOnError(err)
 
-	return executor.New(machine, config.Executor.InitialTape, config.Executor.InitialIndex)
+	return executor.New(machine)
 }
 
 func main() {

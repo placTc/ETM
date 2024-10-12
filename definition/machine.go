@@ -7,8 +7,9 @@ import (
 )
 
 type MachineDefinition struct {
-	StateDefinition StateDefinition    `yaml:"state"`
 	Alphabet        AlphabetDefinition `yaml:"alphabet"`
+	Tape            TapeDefinition     `yaml:"tape"`
+	StateDefinition StateDefinition    `yaml:"state"`
 }
 
 func LoadMachineDefinition(filepath string) (machine MachineDefinition, err error) {

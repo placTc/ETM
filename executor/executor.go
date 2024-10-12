@@ -6,7 +6,6 @@ import (
 	. "etm/common"
 	"etm/common/utils"
 	cfg "etm/configuration"
-	"fmt"
 	"slices"
 	"time"
 )
@@ -24,23 +23,12 @@ type singleState struct {
 	State cfg.State
 }
 
-func New(machine cfg.MachineConfiguration, initialTape []string, initialTapeIndex int64) Executor {
+func New(machine cfg.MachineConfiguration) Executor {
 	executor := Executor{}
 	executor.machine = machine
 	executor.currentState = singleState{Name: machine.InitialState, State: machine.StateMap[machine.InitialState]}
-	executor.tape = initialTape
-	for i := range executor.tape {
-		if !slices.Contains(executor.machine.Symbols, executor.tape[i]) {
-			panic(
-				fmt.Sprintf(
-					"Initial tape contained symbol '%v' not present in alphabet '%v'",
-					executor.tape[i],
-					executor.machine.Symbols,
-				),
-			)
-		}
-	}
-	executor.index = initialTapeIndex
+	executor.tape = machine.Tape.InitialTape
+	executor.index = machine.Tape.InitialIndex
 
 	return executor
 }

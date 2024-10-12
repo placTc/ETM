@@ -2,7 +2,4 @@ general:
   turingMachineConfiguration: tmConfigs/copy-subroutine.tmf
 
 executor:
-  executionDelayMs: 100
-  initialTape: [0, 0, 1, 1, 1, 0]
-  initialIndex: 2
-
+  executionDelayMs: 75

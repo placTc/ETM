@@ -19,9 +19,7 @@ type General struct {
 }
 
 type Executor struct {
-	ExecutionDelayMs int      `yaml:"executionDelayMs"`
-	InitialTape      []string `yaml:"initialTape"`
-	InitialIndex     int64    `yaml:"initialIndex"`
+	ExecutionDelayMs int `yaml:"executionDelayMs"`
 }
 
 func LoadSettings() Settings {

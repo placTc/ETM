@@ -20,6 +20,7 @@ type MachineConfiguration struct {
 	InitialState   string
 	HaltingStates  Either[string, []string]
 	StateMap       map[string]State
+	Tape           TapeDefinition
 }
 
 type State map[string]StateAction
@@ -97,6 +98,31 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 		}
 	}
 	machineConfiguration.PermittedInput = definition.Alphabet.Input
+
+	for i := range definition.Tape.InitialTape {
+		if definition.Tape.InitialTape[i] == BlankSymbolReference {
+			definition.Tape.InitialTape[i] = machineConfiguration.BlankSymbol
+		}
+		if !slices.Contains(machineConfiguration.Symbols, definition.Tape.InitialTape[i]) {
+			return MachineConfiguration{}, fmt.Errorf(
+				"Could not create Turing Machine configuration, "+
+					"initial tape confgiuration contained symbol '%v' not present in alphabet '%v'",
+				definition.Tape.InitialTape[i],
+				machineConfiguration.Symbols,
+			)
+		}
+	}
+	machineConfiguration.Tape.InitialTape = definition.Tape.InitialTape
+
+	if definition.Tape.InitialIndex < 0 || definition.Tape.InitialIndex > int64(len(machineConfiguration.Tape.InitialTape)-1) {
+		return MachineConfiguration{}, fmt.Errorf(
+			"Could not create Turing Machine configuration, "+
+				"initial tape index %v was outside the range of the initial tape %v",
+			definition.Tape.InitialIndex,
+			machineConfiguration.Tape.InitialTape,
+		)
+	}
+	machineConfiguration.Tape.InitialIndex = definition.Tape.InitialIndex
 
 	var stateMap map[string]State = map[string]State{}
 	for stateName, stateDefinition := range definition.StateDefinition.States {

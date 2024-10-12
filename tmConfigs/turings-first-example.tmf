@@ -6,6 +6,11 @@ alphabet:
     - "-"
   input: [0, 1]
 
+tape:
+  initial_tape: [blank, blank, blank, blank, blank, blank, blank, blank]
+  initial_index: 0
+
+
 state:
   initial: q1
   halting: halt

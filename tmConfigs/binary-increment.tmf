@@ -1,12 +1,12 @@
+
 alphabet:
   blank: 0
   symbols: [0, 1]
   input: [0, 1]
 
 tape:
-  initial_tape: [0, 0, 1, 1, 0, 0, 0, 0]
+  initial_tape: [0, 0, 0, 0, 0, 0, 0, 0]
   initial_index: 2
-
 
 state:
   initial: s1
