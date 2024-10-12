@@ -6,6 +6,7 @@ import (
 	. "etm/common"
 	"etm/common/utils"
 	cfg "etm/configuration"
+	"fmt"
 	"slices"
 	"time"
 )
@@ -39,17 +40,20 @@ func (ex Executor) IsHalted() bool {
 
 func (ex *Executor) Step() error {
 	if !ex.halted {
+		if currentStateIsHaltState(ex) {
+			ex.halted = true
+			return errors.New("Turing machine has halted.")
+		}
+
 		currentStateAction := ex.currentState.State[ex.tape[ex.index]]
+		if currentStateAction.Write != "" {
+			ex.tape[ex.index] = currentStateAction.Write
+		}
+		move(ex, currentStateAction.Move)
 		ex.currentState = singleState{
 			Name:  currentStateAction.Transition,
 			State: ex.machine.StateMap[currentStateAction.Transition],
 		}
-		if currentStateIsHaltState(ex) {
-			ex.halted = true
-			return nil
-		}
-		ex.tape[ex.index] = currentStateAction.Write
-		move(ex, currentStateAction.Move)
 
 		return nil
 	} else {
@@ -70,7 +74,11 @@ func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
 		if prestep != nil {
 			prestep(ex)
 		}
-		ex.Step()
+		err := ex.Step()
+		if err != nil {
+			fmt.Println(err)
+			return 
+		}
 		if poststep != nil {
 			poststep(ex)
 		}

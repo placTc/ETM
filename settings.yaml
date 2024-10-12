@@ -1,5 +1,5 @@
 general:
-  turingMachineConfiguration: tmConfigs/copy-subroutine.tmf
+  turingMachineConfiguration: tmConfigs/binary-increment.tmf
 
 executor:
-  executionDelayMs: 75
+  executionDelayMs: 300

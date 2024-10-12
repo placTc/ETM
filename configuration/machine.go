@@ -136,9 +136,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 				stateActionDefinition.Transition = stateName
 			}
 
-			if stateActionDefinition.Write == "" {
-				stateActionDefinition.Write = stateActionSymbol
-			} else if stateActionDefinition.Write == BlankSymbolReference {
+			if stateActionDefinition.Write == BlankSymbolReference {
 				stateActionDefinition.Write = machineConfiguration.BlankSymbol
 			}
 
@@ -157,7 +155,8 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 			}
 			_, exists := definition.StateDefinition.States[stateActionDefinition.Transition]
 
-			if !slices.Contains(machineConfiguration.Symbols, stateActionDefinition.Write) && stateActionSymbol != DefaultReference {
+			if !slices.Contains(machineConfiguration.Symbols, stateActionDefinition.Write) &&
+				stateActionSymbol != DefaultReference && stateActionDefinition.Write != "" {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
 						"the write symbol '%v' for action symbol '%v' in state '%v' was not found in the alphabet '%v'",
@@ -174,7 +173,7 @@ func New(definition MachineDefinition, settings Settings) (MachineConfiguration,
 					machineConfiguration.BlankSymbol,
 				),
 				stateActionDefinition.Write,
-			) && stateActionSymbol != DefaultReference {
+			) && stateActionSymbol != DefaultReference && stateActionDefinition.Write != "" {
 				return MachineConfiguration{}, fmt.Errorf(
 					"Could not create Turing Machine configuration, "+
 						"the write symbol '%v' for action symbol '%v' in state '%v' was not in the permitted inputs '%v'",
