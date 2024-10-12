@@ -1,0 +1,65 @@
+
+alphabet:
+  blank: "-"
+  symbols: ["-", 0, 1, "#"]
+  input: [0, 1]
+
+tape:
+  initial_tape: [blank, 1, 1, 0, 0, 1, 1, "#", blank, 0, 0, 1, 1, 1, 1, "#"]
+  initial_index: 0
+
+state:
+  initial: q_init
+  halting: halt
+  null_move: true
+  states:
+    q_init:
+      default:
+        move: R
+      "#":
+        transition: q_dec
+        move: L
+    q_dec:
+      0:
+        write: 1
+        move: L
+      1:
+        write: 0
+        move: L
+        transition: q_traverse_r1
+      default:
+        transition: halt
+    q_inc:
+      0:
+        write: 1
+        move: L
+        transition: q_traverse_l1
+      1:
+        write: 0
+        move: L
+      blank:
+        write: 1
+        move: L
+        transition: q_traverse_l1
+      default:
+        transition: halt
+    q_traverse_r1:
+      default:
+        move: R
+      "#":
+        transition: q_traverse_r2
+        move: R
+    q_traverse_r2:
+      default:
+        move: R
+      "#":
+        transition: q_inc
+        move: L
+    q_traverse_l1:
+      default:
+        move: L
+      "#":
+        transition: q_dec
+        move: L
+
+    halt: null

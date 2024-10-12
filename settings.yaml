@@ -1,5 +1,5 @@
 general:
-  turingMachineConfiguration: tmConfigs/binary-increment.tmf
+  turingMachineConfiguration: tmConfigs/binary-add.tmf
 
 executor:
-  executionDelayMs: 300
+  executionDelayMs: 5
