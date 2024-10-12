@@ -45,7 +45,12 @@ func (ex *Executor) Step() error {
 			return errors.New("Turing machine has halted.")
 		}
 
-		currentStateAction := ex.currentState.State[ex.tape[ex.index]]
+		currentStateAction, exists := ex.currentState.State[ex.tape[ex.index]]
+		if !exists {
+			ex.halted = true
+			return fmt.Errorf("Got unexpected symbol '%v' for state '%v'. Turing machine halted.", ex.tape[ex.index], ex.currentState.Name)
+		}
+
 		if currentStateAction.Write != "" {
 			ex.tape[ex.index] = currentStateAction.Write
 		}
@@ -53,6 +58,10 @@ func (ex *Executor) Step() error {
 		ex.currentState = singleState{
 			Name:  currentStateAction.Transition,
 			State: ex.machine.StateMap[currentStateAction.Transition],
+		}
+
+		if ex.currentState.State == nil {
+
 		}
 
 		return nil
@@ -77,7 +86,7 @@ func (ex *Executor) Run(prestep func(*Executor), poststep func(*Executor)) {
 		err := ex.Step()
 		if err != nil {
 			fmt.Println(err)
-			return 
+			return
 		}
 		if poststep != nil {
 			poststep(ex)
